@@ -1,0 +1,26 @@
+<nav class="navbar navbar-expand navbar-dark bg-dark px-3">
+
+  <a class="navbar-brand" routerLink="/home">
+    Sportly
+  </a>
+
+  <ul class="navbar-nav me-auto">
+    <li class="nav-item">
+      <a class="nav-link" routerLink="/leagues">Leagues</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" routerLink="/teams">Teams</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" routerLink="/players">Players</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" routerLink="/charts">Charts</a>
+    </li>
+  </ul>
+
+  <button class="btn btn-outline-light btn-sm" (click)="logout()">
+    Logout
+  </button>
+
+</nav>
