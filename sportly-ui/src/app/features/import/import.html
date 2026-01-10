@@ -1,37 +1,39 @@
 <div class="container mt-4">
   <h2>Data Import</h2>
 
-  <form [formGroup]="form" class="row g-3 mb-3">
-    <div class="col-md-3">
+  <form [formGroup]="form" class="row g-3 mb-4">
+    <div class="col-md-4">
       <label class="form-label">League ID</label>
-      <input type="number" class="form-control" formControlName="leagueId">
+      <input type="number" class="form-control" formControlName="leagueId" />
     </div>
 
-    <div class="col-md-3">
+    <div class="col-md-4">
       <label class="form-label">Season</label>
-      <input type="number" class="form-control" formControlName="season">
+      <input type="number" class="form-control" formControlName="season" />
     </div>
   </form>
 
-  <div class="d-flex gap-2 flex-wrap">
-    <button class="btn btn-primary" (click)="importLeagues()" [disabled]="loading">
+  <div class="mb-3">
+    <button class="btn btn-primary me-2" (click)="importLeagues()">
       Import Leagues
     </button>
 
-    <button class="btn btn-secondary" (click)="importTeams()" [disabled]="loading">
+    <button class="btn btn-secondary me-2" (click)="importTeams()">
       Import Teams
     </button>
 
-    <button class="btn btn-warning" (click)="importPlayers()" [disabled]="loading">
+    <button class="btn btn-warning me-2" (click)="importPlayers()">
       Import Players
     </button>
 
-    <button class="btn btn-success" (click)="importStandings()" [disabled]="loading">
+    <button class="btn btn-success" (click)="importStandings()">
       Import Standings
     </button>
   </div>
 
-  <div class="alert alert-info mt-3" *ngIf="message">
-    {{ message }}
-  </div>
+  <ng-container *ngIf="result$ | async as result">
+    <div *ngIf="result" class="alert alert-info mt-3">
+      {{ result }}
+    </div>
+  </ng-container>
 </div>

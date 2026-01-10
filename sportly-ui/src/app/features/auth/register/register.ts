@@ -1,64 +1,49 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
+import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Router, RouterLink } from '@angular/router';
+import { Subject, Observable, switchMap, tap, catchError, of, startWith } from 'rxjs';
 import { AuthService } from '../../../core/services/auth.service';
-import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-register',
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule, RouterLink],
-  templateUrl: './register.html',
-  styleUrls: ['./register.scss']
+  templateUrl: './register.html'
 })
 export class RegisterComponent {
-  loading = false;
-  error: string | null = null;
 
-  registerForm;
+  form!: FormGroup;
+
+  private submit$ = new Subject<void>();
+  result$!: Observable<string>;
 
   constructor(
     private fb: FormBuilder,
     private authService: AuthService,
     private router: Router
   ) {
-    this.registerForm = this.fb.group({
+    this.form = this.fb.group({
       username: ['', Validators.required],
       email: ['', [Validators.required, Validators.email]],
-      password: ['', Validators.required],
-      confirmPassword: ['', Validators.required]
+      password: ['', Validators.required]
     });
+
+    this.result$ = this.submit$.pipe(
+      switchMap(() =>
+        this.authService.register(this.form.value).pipe(
+          tap(() => this.router.navigate(['/login'])),
+          catchError(err =>
+            of(err?.error?.message || 'Registration failed')
+          )
+        )
+      ),
+      startWith('')
+    );
   }
 
-  onSubmit(): void {
-    if (this.registerForm.invalid) {
-      return;
-    }
-
-    const { username, email, password, confirmPassword } =
-      this.registerForm.value;
-
-    if (password !== confirmPassword) {
-      this.error = 'Passwords do not match';
-      return;
-    }
-
-    this.loading = true;
-    this.error = null;
-
-    this.authService.register({
-      username: username!,
-      email: email!,
-      password: password!
-    }).subscribe({
-      next: () => {
-        this.router.navigate(['/login']);
-      },
-      error: () => {
-        this.error = 'Registration failed';
-        this.loading = false;
-      }
-    });
+  submit() {
+    if (this.form.invalid) return;
+    this.submit$.next();
   }
 }

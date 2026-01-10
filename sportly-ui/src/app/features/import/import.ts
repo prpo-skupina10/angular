@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup } from '@angular/forms';
+import { Subject, Observable, switchMap, startWith } from 'rxjs';
 import { ImportService } from '../../core/services/import.service';
 
 @Component({
@@ -10,10 +11,11 @@ import { ImportService } from '../../core/services/import.service';
   templateUrl: './import.html'
 })
 export class ImportComponent {
-  message = '';
-  loading = false;
 
-  form: FormGroup;
+  form!: FormGroup;
+
+  private trigger$ = new Subject<Observable<string>>();
+  result$!: Observable<string>;
 
   constructor(
     private fb: FormBuilder,
@@ -23,40 +25,35 @@ export class ImportComponent {
       leagueId: 39,
       season: 2023
     });
+
+    this.result$ = this.trigger$.pipe(
+      switchMap(obs => obs),
+      startWith('')
+    );
   }
 
   importLeagues() {
-    this.run(this.importService.importLeagues());
+    this.trigger$.next(this.importService.importLeagues());
   }
 
   importTeams() {
     const { leagueId, season } = this.form.value;
-    this.run(this.importService.importTeams(leagueId!, season!));
+    this.trigger$.next(
+      this.importService.importTeams(leagueId!, season!)
+    );
   }
 
   importPlayers() {
     const { leagueId } = this.form.value;
-    this.run(this.importService.importPlayersByLeague(leagueId!));
+    this.trigger$.next(
+      this.importService.importPlayersByLeague(leagueId!)
+    );
   }
 
   importStandings() {
     const { leagueId, season } = this.form.value;
-    this.run(this.importService.importStandings(leagueId!, season!));
-  }
-
-  private run(obs: any) {
-    this.loading = true;
-    this.message = '';
-
-    obs.subscribe({
-      next: (msg: string) => {
-        this.message = msg;
-        this.loading = false;
-      },
-      error: (err: any) => {
-        this.message = err?.error || 'Import failed';
-        this.loading = false;
-      }
-    });
+    this.trigger$.next(
+      this.importService.importStandings(leagueId!, season!)
+    );
   }
 }

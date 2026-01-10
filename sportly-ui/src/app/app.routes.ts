@@ -69,14 +69,6 @@ export const routes: Routes = [
   },
 
   {
-    path: 'teams/:teamId/players',
-    canActivate: [authGuard],
-    loadComponent: () =>
-      import('./features/players/players')
-        .then(m => m.PlayersComponent)
-  },
-
-  {
     path: '',
     redirectTo: 'login',
     pathMatch: 'full'

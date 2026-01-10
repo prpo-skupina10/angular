@@ -1,6 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
+import { Observable, switchMap } from 'rxjs';
 import { TeamService, Team } from '../../core/services/team.service';
 
 @Component({
@@ -9,12 +10,9 @@ import { TeamService, Team } from '../../core/services/team.service';
   imports: [CommonModule],
   templateUrl: './teams.html'
 })
-export class TeamsComponent implements OnInit {
+export class TeamsComponent {
 
-  teams: Team[] = [];
-  loading = true;
-  error: string | null = null;
-  leagueId!: number;
+  teams$!: Observable<Team[]>;
 
   constructor(
     private route: ActivatedRoute,
@@ -22,34 +20,13 @@ export class TeamsComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    const leagueIdParam = this.route.snapshot.paramMap.get('leagueId');
-
-    if (leagueIdParam) {
-      const leagueId = Number(leagueIdParam);
-
-      this.teamService.getTeamsByLeague(leagueId).subscribe({
-        next: data => {
-          this.teams = data;
-          this.loading = false;
-        },
-        error: () => {
-          this.error = 'Failed to load teams by league';
-          this.loading = false;
-        }
-      });
-
-    } else {
-      this.teamService.getAllTeams().subscribe({
-        next: data => {
-          this.teams = data;
-          this.loading = false;
-        },
-        error: () => {
-          this.error = 'Failed to load teams';
-          this.loading = false;
-        }
-      });
-    }
+    this.teams$ = this.route.paramMap.pipe(
+      switchMap(params => {
+        const leagueId = params.get('leagueId');
+        return leagueId
+          ? this.teamService.getTeamsByLeague(+leagueId)
+          : this.teamService.getAllTeams();
+      })
+    );
   }
-
 }

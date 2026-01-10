@@ -1,51 +1,51 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
+import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Router, RouterLink } from '@angular/router';
+import { Subject, Observable, switchMap, tap, catchError, of, startWith } from 'rxjs';
 import { AuthService } from '../../../core/services/auth.service';
-import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-login',
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule, RouterLink],
-  templateUrl: './login.html',
-  styleUrls: ['./login.scss']
+  templateUrl: './login.html'
 })
 export class LoginComponent {
-  loading = false;
-  error: string | null = null;
-  loginForm;
+
+  form!: FormGroup;
+
+  private submit$ = new Subject<void>();
+  result$!: Observable<string>;
 
   constructor(
     private fb: FormBuilder,
     private authService: AuthService,
     private router: Router
   ) {
-    this.loginForm = this.fb.group({
+    this.form = this.fb.group({
       username: ['', Validators.required],
       password: ['', Validators.required]
     });
+
+    this.result$ = this.submit$.pipe(
+      switchMap(() =>
+        this.authService.login(
+          this.form.value.username,
+          this.form.value.password
+        ).pipe(
+          tap(() => this.router.navigate(['/home'])),
+          catchError(err =>
+            of(err?.error?.message || 'Invalid credentials')
+          )
+        )
+      ),
+      startWith('')
+    );
   }
 
-  onSubmit(): void {
-    if (this.loginForm.invalid) {
-      return;
-    }
-
-    this.loading = true;
-    this.error = null;
-
-    const { username, password } = this.loginForm.value;
-
-    this.authService.login(username!, password!).subscribe({
-      next: () => {
-        this.router.navigate(['/home']);
-      },
-      error: () => {
-        this.error = 'Invalid username or password';
-        this.loading = false;
-      }
-    });
+  submit() {
+    if (this.form.invalid) return;
+    this.submit$.next();
   }
 }

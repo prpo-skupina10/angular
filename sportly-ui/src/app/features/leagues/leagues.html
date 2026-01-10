@@ -1,29 +1,20 @@
 <div class="container mt-4">
   <h2>Leagues</h2>
 
-  <div *ngIf="loading" class="alert alert-info">
-    Loading leagues...
-  </div>
-
-  <div *ngIf="error" class="alert alert-danger">
-    {{ error }}
-  </div>
-
-  <div class="row" *ngIf="!loading && !error">
-    <div class="col-md-4 mb-3" *ngFor="let league of leagues">
-      <div class="card h-100 shadow-sm">
-        <div class="card-body text-center">
-          <img
-            *ngIf="league.logo"
-            [src]="league.logo"
-            alt="{{ league.name }}"
-            class="img-fluid mb-2"
-            style="max-height: 80px"
-          />
-          <h5 class="card-title">{{ league.name }}</h5>
-          <p class="card-text text-muted">{{ league.country }}</p>
+  <ng-container *ngIf="leagues$ | async as leagues; else loading">
+    <div class="row">
+      <div class="col-md-4 mb-3" *ngFor="let league of leagues">
+        <div class="card h-100 shadow-sm text-center">
+          <div class="card-body">
+            <h5>{{ league.name }}</h5>
+            <p class="text-muted">{{ league.country }}</p>
+          </div>
         </div>
       </div>
     </div>
-  </div>
+  </ng-container>
+
+  <ng-template #loading>
+    <div class="alert alert-info">Loading leagues...</div>
+  </ng-template>
 </div>

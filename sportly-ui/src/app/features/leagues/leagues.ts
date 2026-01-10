@@ -1,5 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Observable } from 'rxjs';
 import { LeagueService, League } from '../../core/services/league.service';
 
 @Component({
@@ -8,24 +9,13 @@ import { LeagueService, League } from '../../core/services/league.service';
   imports: [CommonModule],
   templateUrl: './leagues.html'
 })
-export class LeaguesComponent implements OnInit {
+export class LeaguesComponent {
 
-  leagues: League[] = [];
-  loading = true;
-  error: string | null = null;
+  leagues$!: Observable<League[]>;
 
   constructor(private leagueService: LeagueService) {}
 
   ngOnInit(): void {
-    this.leagueService.getLeagues().subscribe({
-      next: (data) => {
-        this.leagues = data;
-        this.loading = false;
-      },
-      error: () => {
-        this.error = 'Failed to load leagues';
-        this.loading = false;
-      }
-    });
+    this.leagues$ = this.leagueService.getLeagues();
   }
 }

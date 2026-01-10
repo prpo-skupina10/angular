@@ -1,67 +1,34 @@
-<div class="container vh-100 d-flex justify-content-center align-items-center">
-  <div class="card shadow-sm" style="width: 420px;">
-    <div class="card-body">
+<div class="container mt-5" style="max-width: 400px">
+  <h3 class="mb-3 text-center">Register</h3>
 
-      <h3 class="card-title text-center mb-4">Register</h3>
-
-      <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
-
-        <div class="mb-3">
-          <label class="form-label">Username</label>
-          <input
-            type="text"
-            class="form-control"
-            formControlName="username"
-          />
-        </div>
-
-        <div class="mb-3">
-          <label class="form-label">Email</label>
-          <input
-            type="email"
-            class="form-control"
-            formControlName="email"
-          />
-        </div>
-
-        <div class="mb-3">
-          <label class="form-label">Password</label>
-          <input
-            type="password"
-            class="form-control"
-            formControlName="password"
-          />
-        </div>
-
-        <div class="mb-3">
-          <label class="form-label">Confirm password</label>
-          <input
-            type="password"
-            class="form-control"
-            formControlName="confirmPassword"
-          />
-        </div>
-
-        <button
-          type="submit"
-          class="btn btn-success w-100"
-          [disabled]="loading || registerForm.invalid"
-        >
-          Register
-        </button>
-
-        <div class="text-danger text-center mt-3" *ngIf="error">
-          {{ error }}
-        </div>
-
-        <div class="text-center mt-3">
-          <small>
-            Že imaš račun?
-            <a routerLink="/login">Login</a>
-          </small>
-        </div>
-
-      </form>
+  <form [formGroup]="form" (ngSubmit)="submit()">
+    <div class="mb-3">
+      <label class="form-label">Username</label>
+      <input class="form-control" formControlName="username" />
     </div>
+
+    <div class="mb-3">
+      <label class="form-label">Email</label>
+      <input class="form-control" formControlName="email" />
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label">Password</label>
+      <input type="password" class="form-control" formControlName="password" />
+    </div>
+
+    <button class="btn btn-success w-100" type="submit">
+      Register
+    </button>
+  </form>
+
+  <ng-container *ngIf="result$ | async as result">
+    <div *ngIf="result" class="alert alert-danger mt-3">
+      {{ result }}
+    </div>
+  </ng-container>
+
+  <div class="text-center mt-3">
+    <a routerLink="/login">Already have an account? Login</a>
   </div>
 </div>
