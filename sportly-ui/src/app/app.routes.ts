@@ -29,6 +29,54 @@ export const routes: Routes = [
   },
 
   {
+    path: 'import',
+    canActivate: [authGuard],
+    loadComponent: () =>
+    import('./features/import/import')
+      .then(m => m.ImportComponent)
+  },
+
+  {
+    path: 'leagues',
+    canActivate: [authGuard],
+    loadComponent: () =>
+      import('./features/leagues/leagues')
+        .then(m => m.LeaguesComponent)
+  },
+
+  {
+    path: 'teams',
+    canActivate: [authGuard],
+    loadComponent: () =>
+      import('./features/teams/teams')
+        .then(m => m.TeamsComponent)
+  },
+
+  {
+    path: 'players',
+    canActivate: [authGuard],
+    loadComponent: () =>
+      import('./features/players/players')
+        .then(m => m.PlayersComponent)
+  },
+
+  {
+    path: 'leagues/:leagueId/teams',
+    canActivate: [authGuard],
+    loadComponent: () =>
+      import('./features/teams/teams')
+        .then(m => m.TeamsComponent)
+  },
+
+  {
+    path: 'teams/:teamId/players',
+    canActivate: [authGuard],
+    loadComponent: () =>
+      import('./features/players/players')
+        .then(m => m.PlayersComponent)
+  },
+
+  {
     path: '',
     redirectTo: 'login',
     pathMatch: 'full'

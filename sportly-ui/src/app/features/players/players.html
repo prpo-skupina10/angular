@@ -1,0 +1,30 @@
+<div class="container mt-4">
+  <h2>Players</h2>
+
+  <div *ngIf="loading" class="alert alert-info">
+    Loading players...
+  </div>
+
+  <div *ngIf="error" class="alert alert-danger">
+    {{ error }}
+  </div>
+
+  <table *ngIf="!loading && !error" class="table table-striped">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Position</th>
+        <th>Age</th>
+        <th>Nationality</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let player of players">
+        <td>{{ player.name }}</td>
+        <td>{{ player.position || '-' }}</td>
+        <td>{{ player.age || '-' }}</td>
+        <td>{{ player.nationality || '-' }}</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
