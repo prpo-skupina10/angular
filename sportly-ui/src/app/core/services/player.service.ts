@@ -9,6 +9,7 @@ export interface Player {
   position?: string;
   age?: number;
   nationality?: string;
+  teamId?: number;
 }
 
 @Injectable({ providedIn: 'root' })

@@ -6,8 +6,9 @@
       <div class="col-md-3 mb-3" *ngFor="let player of players">
         <div class="card h-100 text-center">
           <div class="card-body">
-            <h6>{{ player.name }}</h6>
-            <p class="text-muted">{{ player.position }}</p>
+            <p>Name: <b>{{ player.name }}</b></p>
+            <p class="text-muted">Position: <b>{{ player.position }}</b></p>
+            <p class="text-muted">Age: <b>{{ player.age }}</b></p>
           </div>
         </div>
       </div>
