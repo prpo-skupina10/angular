@@ -69,6 +69,14 @@ export const routes: Routes = [
   },
 
   {
+    path: 'charts',
+    canActivate: [authGuard],
+    loadComponent: () =>
+      import('./features/charts/charts/charts')
+        .then(m => m.ChartsComponent)
+  },
+
+  {
     path: '',
     redirectTo: 'login',
     pathMatch: 'full'

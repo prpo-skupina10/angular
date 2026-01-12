@@ -1,0 +1,49 @@
+<div class="container mt-4">
+  <h2>Charts</h2>
+
+  <div class="mb-3">
+    <button class="btn btn-primary me-2" (click)="loadPlayersChart()">
+      Players by Position
+    </button>
+
+    <button class="btn btn-secondary" (click)="loadStandingsChart()">
+      League Standings
+    </button>
+  </div>
+
+  <div *ngIf="loading" class="alert alert-info">
+    Loading chart...
+  </div>
+
+  <div *ngIf="error" class="alert alert-danger">
+    {{ error }}
+  </div>
+
+  <div class="row" *ngIf="!loading">
+    <div class="col-md-6 mb-4" *ngIf="playersChartUrl">
+      <div class="card shadow-sm">
+        <div class="card-body text-center">
+          <h5>Players by Position</h5>
+          <img
+            [src]="playersChartUrl"
+            class="img-fluid"
+            alt="Players chart"
+          />
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-6 mb-4" *ngIf="standingsChartUrl">
+      <div class="card shadow-sm">
+        <div class="card-body text-center">
+          <h5>League Standings</h5>
+          <img
+            [src]="standingsChartUrl"
+            class="img-fluid"
+            alt="Standings chart"
+          />
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
