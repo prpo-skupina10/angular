@@ -1,0 +1,140 @@
+<div class="betting container mt-4">
+  <div class="d-flex flex-wrap align-items-center gap-2 mb-3">
+    <div>
+      <h2 class="mb-0">Betting</h2>
+      <div class="text-muted">Place and track your bets by fixture</div>
+    </div>
+    <div class="ms-auto">
+      <div class="btn-group btn-group-sm" role="group">
+        <button class="btn btn-outline-primary" (click)="importFixtures()" [disabled]="importing || loading">
+          <span *ngIf="importing" class="spinner-border spinner-border-sm me-1" role="status"></span>
+          Import fixtures
+        </button>
+        <button class="btn btn-outline-secondary" (click)="loadFixtures()" [disabled]="loading || importing">
+          <span *ngIf="loading" class="spinner-border spinner-border-sm me-1" role="status"></span>
+          Refresh fixtures
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="message" class="alert" [ngClass]="{
+      'alert-info': messageVariant === 'info',
+      'alert-success': messageVariant === 'success',
+      'alert-danger': messageVariant === 'danger'
+    }">
+    {{ message }}
+  </div>
+
+  <div class="card">
+    <div class="card-body">
+      <h5 class="card-title">Upcoming fixtures</h5>
+      <div class="row g-2 align-items-end">
+        <div class="col-md-6">
+          <label class="form-label">Fixture</label>
+          <select class="form-select" [(ngModel)]="selectedFixtureId">
+            <option *ngFor="let f of fixtures" [value]="f.fixtureId">
+              {{ f.homeTeamName }} vs {{ f.awayTeamName }} — {{ f.utcDate | date:'short' }} ({{ f.status }})
+            </option>
+          </select>
+        </div>
+        <div class="col-md-3">
+          <label class="form-label d-block">Selection</label>
+          <div class="btn-group" role="group">
+            <input type="radio" class="btn-check" name="selection" id="selHome" [(ngModel)]="selection" value="HOME">
+            <label class="btn btn-outline-primary" for="selHome">Home</label>
+            <input type="radio" class="btn-check" name="selection" id="selDraw" [(ngModel)]="selection" value="DRAW">
+            <label class="btn btn-outline-primary" for="selDraw">Draw</label>
+            <input type="radio" class="btn-check" name="selection" id="selAway" [(ngModel)]="selection" value="AWAY">
+            <label class="btn btn-outline-primary" for="selAway">Away</label>
+          </div>
+        </div>
+        <div class="col-md-2">
+          <label class="form-label">Stake</label>
+          <input type="number" min="1" class="form-control" [(ngModel)]="stake">
+        </div>
+        <div class="col-md-1 text-end">
+          <button class="btn btn-success w-100" (click)="placeBet()" [disabled]="loading">
+            <span *ngIf="loading" class="spinner-border spinner-border-sm me-1" role="status"></span>
+            Bet
+          </button>
+        </div>
+      </div>
+      <div class="text-muted small mt-2">Odds refresh when you reload fixtures.</div>
+    </div>
+  </div>
+
+  <div class="card mt-3" *ngIf="fixtures.length">
+    <div class="card-body">
+      <h5 class="card-title">Fixtures & odds</h5>
+      <div class="table-responsive">
+        <table class="table table-sm align-middle">
+          <thead>
+            <tr>
+              <th>Kickoff</th>
+              <th>Fixture</th>
+              <th class="text-end">Home</th>
+              <th class="text-end">Draw</th>
+              <th class="text-end">Away</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let f of fixtures">
+              <td>{{ f.utcDate | date:'short' }}</td>
+              <td>{{ f.homeTeamName }} vs {{ f.awayTeamName }}</td>
+              <td class="text-end fw-semibold">{{ f.homeWinOdds }}</td>
+              <td class="text-end fw-semibold">{{ f.drawOdds }}</td>
+              <td class="text-end fw-semibold">{{ f.awayWinOdds }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="card mt-3" *ngIf="bets.length; else noBets">
+    <div class="card-body">
+      <h5 class="card-title">Your bets</h5>
+      <div class="table-responsive">
+        <table class="table table-sm align-middle">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Fixture</th>
+              <th>Selection</th>
+              <th class="text-end">Stake</th>
+              <th class="text-end">Odds</th>
+              <th class="text-end">Potential</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let b of bets">
+              <td>{{ b.id }}</td>
+              <td>#{{ b.fixtureId }}</td>
+              <td class="text-uppercase fw-semibold">{{ b.selection }}</td>
+              <td class="text-end">{{ b.stake | number:'1.2-2' }}</td>
+              <td class="text-end">{{ b.odds }}</td>
+              <td class="text-end">{{ b.potentialPayout | number:'1.2-2' }}</td>
+              <td>
+                <span class="badge" [ngClass]="{
+                  'bg-secondary': b.status === 'OPEN',
+                  'bg-success': b.status === 'WON',
+                  'bg-danger': b.status === 'LOST'
+                }">{{ b.status }}</span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <ng-template #noBets>
+    <div class="card mt-3">
+      <div class="card-body text-center text-muted">
+        No bets yet. Place your first bet above to start tracking.
+      </div>
+    </div>
+  </ng-template>
+</div>

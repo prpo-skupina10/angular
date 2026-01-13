@@ -61,6 +61,14 @@ export const routes: Routes = [
   },
 
   {
+    path: 'betting',
+    canActivate: [authGuard],
+    loadComponent: () =>
+      import('./features/betting/betting')
+        .then(m => m.BettingComponent)
+  },
+
+  {
     path: 'leagues/:leagueId/teams',
     canActivate: [authGuard],
     loadComponent: () =>
