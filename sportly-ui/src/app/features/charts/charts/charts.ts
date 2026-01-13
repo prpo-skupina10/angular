@@ -1,7 +1,12 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Observable, map } from 'rxjs';
 import { ChartsService } from '../../../core/services/charts.service';
 import { environment } from '../../../../environments/environment';
+
+interface ChartResponse {
+  chart_url: string;
+}
 
 @Component({
   selector: 'app-charts',
@@ -11,48 +16,33 @@ import { environment } from '../../../../environments/environment';
 })
 export class ChartsComponent {
 
-  loading = false;
-  error: string | null = null;
-
-  playersChartUrl?: string;
-  standingsChartUrl?: string;
+  playersChart$?: Observable<string>;
+  standingsChart$?: Observable<string>;
 
   constructor(private chartsService: ChartsService) {}
 
   private fullChartUrl(relativePath: string): string {
     const base = environment.apiUrl.replace('/api', '');
-    return `${base}${relativePath}`;
+    return `${base}${relativePath}?t=${Date.now()}`;
   }
 
   loadPlayersChart(): void {
-    this.loading = true;
-    this.error = null;
+    this.standingsChart$ = undefined;
 
-    this.chartsService.playersByPosition(33).subscribe({
-      next: res => {
-        this.playersChartUrl = this.fullChartUrl(res.chart_url);
-        this.loading = false;
-      },
-      error: () => {
-        this.error = 'Failed to load players chart';
-        this.loading = false;
-      }
-    });
+    this.playersChart$ = this.chartsService
+      .playersByPosition(33)
+      .pipe(
+        map((res: ChartResponse) => this.fullChartUrl(res.chart_url))
+      );
   }
 
   loadStandingsChart(): void {
-    this.loading = true;
-    this.error = null;
+    this.playersChart$ = undefined;
 
-    this.chartsService.standings(39, 2023).subscribe({
-      next: res => {
-        this.standingsChartUrl = this.fullChartUrl(res.chart_url);
-        this.loading = false;
-      },
-      error: () => {
-        this.error = 'Failed to load standings chart';
-        this.loading = false;
-      }
-    });
+    this.standingsChart$ = this.chartsService
+      .standings(39, 2023)
+      .pipe(
+        map((res: ChartResponse) => this.fullChartUrl(res.chart_url))
+      );
   }
 }

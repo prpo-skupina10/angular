@@ -11,39 +11,33 @@
     </button>
   </div>
 
-  <div *ngIf="loading" class="alert alert-info">
-    Loading chart...
-  </div>
-
-  <div *ngIf="error" class="alert alert-danger">
-    {{ error }}
-  </div>
-
-  <div class="row" *ngIf="!loading">
-    <div class="col-md-6 mb-4" *ngIf="playersChartUrl">
-      <div class="card shadow-sm">
-        <div class="card-body text-center">
-          <h5>Players by Position</h5>
-          <img
-            [src]="playersChartUrl"
-            class="img-fluid"
-            alt="Players chart"
-          />
-        </div>
+  <ng-container *ngIf="playersChart$ | async as playersChart; else playersLoading">
+    <div class="card shadow-sm text-center mb-4">
+      <div class="card-body">
+        <h5>Players by Position</h5>
+        <img [src]="playersChart" class="img-fluid" />
       </div>
     </div>
+  </ng-container>
 
-    <div class="col-md-6 mb-4" *ngIf="standingsChartUrl">
-      <div class="card shadow-sm">
-        <div class="card-body text-center">
-          <h5>League Standings</h5>
-          <img
-            [src]="standingsChartUrl"
-            class="img-fluid"
-            alt="Standings chart"
-          />
-        </div>
+  <ng-template #playersLoading>
+    <div *ngIf="playersChart$" class="alert alert-info">
+      Loading players chart...
+    </div>
+  </ng-template>
+
+  <ng-container *ngIf="standingsChart$ | async as standingsChart; else standingsLoading">
+    <div class="card shadow-sm text-center">
+      <div class="card-body">
+        <h5>League Standings</h5>
+        <img [src]="standingsChart" class="img-fluid" />
       </div>
     </div>
-  </div>
+  </ng-container>
+
+  <ng-template #standingsLoading>
+    <div *ngIf="standingsChart$" class="alert alert-info">
+      Loading standings chart...
+    </div>
+  </ng-template>
 </div>
